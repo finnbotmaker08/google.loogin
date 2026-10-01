@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inloggen - Google Accounts</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Google Sans', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #202124;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            background: #fff;
+            text-align: center;
+        }
+
+        @media (min-width: 451px) {
+            .container {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+        }
+
+        .logo-container {
+            margin-bottom: 24px;
+        }
+
+        /* Goede afmetingen voor het echte Google logo */
+        .google-logo {
+            width: 75px;
+            height: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.3333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            color: #5f6368;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.2s;
+            color: #202124;
+        }
+
+        .input-field:focus {
+            border: 2px solid #1a73e8;
+            padding: 15px; /* Compenseer voor dikkere rand */
+        }
+
+        .input-label {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #fff;
+            padding: 0 4px;
+            color: #5f6368;
+            font-size: 16px;
+            pointer-events: none;
+            transition: 0.2s ease all;
+        }
+
+        .input-field:focus ~ .input-label,
+        .input-field:not(:placeholder-shown) ~ .input-label {
+            top: 0;
+            font-size: 12px;
+            color: #1a73e8;
+        }
+
+        .forgot-email {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .forgot-email a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-email a:hover {
+            text-decoration: underline;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .create-account {
+            color: #1a73e8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .create-account:hover {
+            text-decoration: underline;
+        }
+
+        .next-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: #1b66c9;
+        }
+
+        /* Scherm 2: Wachtwoord */
+        #password-step {
+            display: none;
+        }
+
+        .selected-email {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #dadce0;
+            border-radius: 16px;
+            padding: 4px 12px 4px 4px;
+            font-size: 13px;
+            color: #3c4043;
+            margin-bottom: 24px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .selected-email svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            fill: #5f6368;
+        }
+
+        /* Hack / Prank Scherm */
+        #prank-screen {
+            display: none;
+            background-color: #0d1117;
+            color: #58a6ff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .prank-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .prank-card h1 {
+            color: #ff7b72;
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .prank-card p {
+            color: #c9d1d9;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Stap 1: E-mailadres -->
+    <div class="container" id="email-step">
+        <div class="logo-container">
+            <!-- Officiële Google SVG logo -->
+            <svg class="google-logo" viewBox="0 0 75 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.24 13.19v-3.2h9.09c.07.48.12 1.01.12 1.63 0 5.05-3.41 8.65-8.32 8.65-4.86 0-8.82-3.96-8.82-8.82s3.96-8.82 8.82-8.82c2.38 0 4.43.88 5.98 2.33l2.45-2.45C17.06 1.84 13.9 0.63 10.24 0.63 4.91 0.63 0.53 5.01 0.53 10.34s4.38 9.71 9.71 9.71c5.61 0 9.32-3.94 9.32-9.49 0-.66-.06-1.3-.17-1.87H10.24z" fill="#4285F4"/>
+                <path d="M27.27 4.15h3.45v12.28h-3.45V4.15zm1.72-5.11c1.2 0 2.16.96 2.16 2.16 0 1.2-.96 2.16-2.16 2.16-1.2 0-2.16-.96-2.16-2.16 0-1.2.96-2.16 2.16-2.16z" fill="#EA4335"/>
+                <path d="M44.41 12.83c0 3.29-2.52 5.6-5.83 5.6-3.23 0-5.8-2.31-5.8-5.6s2.57-5.6 5.8-5.6c3.31 0 5.83 2.31 5.83 5.6zm-3.37 0c0-1.89-1.07-3.17-2.46-3.17s-2.46 1.28-2.46 3.17 1.07 3.17 2.46 3.17 2.46-1.28 2.46-3.17z" fill="#FBBC05"/>
+                <path d="M57.51 12.83c0 3.29-2.52 5.6-5.83 5.6-3.23 0-5.8-2.31-5.8-5.6s2.57-5.6 5.8-5.6c3.31 0 5.83 2.31 5.83 5.6zm-3.37 0c0-1.89-1.07-3.17-2.46-3.17s-2.46 1.28-2.46 3.17 1.07 3.17 2.46 3.17 2.46-1.28 2.46-3.17z" fill="#4285F4"/>
+                <path d="M63.78 1.45v14.98h-3.35V1.45h3.35z" fill="#34A853"/>
+                <path d="M74.45 13.91l2.67 1.81c-.86 1.28-2.44 3.55-5.94 3.55-5.07 0-8.8-3.91-8.8-8.82 0-5.18 3.78-8.82 8.38-8.82 4.67 0 7 3.53 7.74 5.45l-.39 1h-11.83c.27 1.94 1.88 3.39 3.86 3.39 1.4 0 2.68-.69 3.31-1.56zM66.44 10.4h8.31c-.24-1.61-1.74-2.82-3.37-2.82-1.75 0-3.18 1.15-3.94 2.82z" fill="#4285F4"/>
+            </svg>
+        </div>
+        <h1>Inloggen</h1>
+        <p class="subtitle">Doorgaan bij Google</p>
+
+        <form id="form-email" onsubmit="goToPassword(event)">
+            <div class="input-group">
+                <input type="text" id="email-input" class="input-field" placeholder=" " required>
+                <label class="input-label">E-mailadres of telefoonnummer</label>
+            </div>
+            <div class="forgot-email">
+                <a href="#">E-mailadres vergeten?</a>
+            </div>
+            <div class="button-container">
+                <a href="#" class="create-account">Account maken</a>
+                <button type="submit" class="next-btn">Volgende</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Stap 2: Wachtwoord -->
+    <div class="container" id="password-step">
+        <div class="logo-container">
+            <svg class="google-logo" viewBox="0 0 75 24" xmlns="http://www.w3.org/2000/svg">
+                <!-- Zelfde Google SVG -->
+                <path d="M10.24 13.19v-3.2h9.09c.07.48.12 1.01.12 1.63 0 5.05-3.41 8.65-8.32 8.65-4.86 0-8.82-3.96-8.82-8.82s3.96-8.82 8.82-8.82c2.38 0 4.43.88 5.98 2.33l2.45-2.45C17.06 1.84 13.9 0.63 10.24 0.63 4.91 0.63 0.53 5.01 0.53 10.34s4.38 9.71 9.71 9.71c5.61 0 9.32-3.94 9.32-9.49 0-.66-.06-1.3-.17-1.87H10.24z" fill="#4285F4"/>
+                <path d="M27.27 4.15h3.45v12.28h-3.45V4.15zm1.72-5.11c1.2 0 2.16.96 2.16 2.16 0 1.2-.96 2.16-2.16 2.16-1.2 0-2.16-.96-2.16-2.16 0-1.2.96-2.16 2.16-2.16z" fill="#EA4335"/>
+                <path d="M44.41 12.83c0 3.29-2.52 5.6-5.83 5.6-3.23 0-5.8-2.31-5.8-5.6s2.57-5.6 5.8-5.6c3.31 0 5.83 2.31 5.83 5.6zm-3.37 0c0-1.89-1.07-3.17-2.46-3.17s-2.46 1.28-2.46 3.17 1.07 3.17 2.46 3.17 2.46-1.28 2.46-3.17z" fill="#FBBC05"/>
+                <path d="M57.51 12.83c0 3.29-2.52 5.6-5.83 5.6-3.23 0-5.8-2.31-5.8-5.6s2.57-5.6 5.8-5.6c3.31 0 5.83 2.31 5.83 5.6zm-3.37 0c0-1.89-1.07-3.17-2.46-3.17s-2.46 1.28-2.46 3.17 1.07 3.17 2.46 3.17 2.46-1.28 2.46-3.17z" fill="#4285F4"/>
+                <path d="M63.78 1.45v14.98h-3.35V1.45h3.35z" fill="#34A853"/>
+                <path d="M74.45 13.91l2.67 1.81c-.86 1.28-2.44 3.55-5.94 3.55-5.07 0-8.8-3.91-8.8-8.82 0-5.18 3.78-8.82 8.38-8.82 4.67 0 7 3.53 7.74 5.45l-.39 1h-11.83c.27 1.94 1.88 3.39 3.86 3.39 1.4 0 2.68-.69 3.31-1.56zM66.44 10.4h8.31c-.24-1.61-1.74-2.82-3.37-2.82-1.75 0-3.18 1.15-3.94 2.82z" fill="#4285F4"/>
+            </svg>
+        </div>
+        <h1>Welkom</h1>
+        <div class="selected-email" id="display-email">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            <span id="email-text"></span>
+        </div>
+
+        <form id="form-password" onsubmit="triggerPrank(event)">
+            <div class="input-group">
+                <input type="password" id="password-input" class="input-field" placeholder=" " required>
+                <label class="input-label">Voer je wachtwoord in</label>
+            </div>
+            <div class="forgot-email" style="text-align: left;">
+                <a href="#">Wachtwoord vergeten?</a>
+            </div>
+            <div class="button-container" style="justify-content: flex-end;">
+                <button type="submit" class="next-btn">Inloggen</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Prank Scherm -->
+    <div id="prank-screen">
+        <div class="prank-card">
+            <h1>⚠️ Je bent gehackt.</h1>
+            <p>(grapje, groetjes Finn.)</p>
+        </div>
+    </div>
+
+    <script>
+        function goToPassword(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-input').value;
+            document.getElementById('email-text').innerText = email;
+            document.getElementById('email-step').style.display = 'none';
+            document.getElementById('password-step').style.display = 'block';
+        }
+
+        function triggerPrank(event) {
+            event.preventDefault();
+            document.getElementById('password-step').style.display = 'none';
+            document.getElementById('prank-screen').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
